@@ -45,7 +45,13 @@ class Divission:
 class Addition:
 
   def __init__(self, funcs, signs=None):
-    self.funcs = funcs
+    new_funcs = []
+    for func in funcs:
+      if isinstance(func, Polynomial):
+        if func.coeff==0:
+          continue
+      new_funcs.append(func)
+    self.funcs = new_funcs
     if(signs != None):
       self.signs = signs
     else:
@@ -80,7 +86,13 @@ class Addition:
 class Product:
 
   def __init__(self, funcs):
-    self.funcs = funcs
+    new_funcs = []
+    for func in funcs:
+      if isinstance(func, Polynomial):
+        if func.exp==0 and func.coeff==1:
+          continue
+      new_funcs.append(func)
+    self.funcs = new_funcs
 
   def evaluate(self, inps):
     total = 1
@@ -240,11 +252,11 @@ class Cosine:
     val = evaluate_inside(self, inps)
     return math.cos(val)*self.coeff
 
-  def differentiate(self):
+  def differentiate(self, var='x'):
     if(self.inside == None):
       return Sine(coeff = self.coeff*-1)
     else:
-      return Product([Sine(inside=self.inside), self.inside.differentiate()])
+      return Product([Sine(inside=self.inside), self.inside.differentiate(var='x')])
 
   def __str__(self):
     inside_str = '(x)'
