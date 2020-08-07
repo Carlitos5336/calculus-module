@@ -1,6 +1,8 @@
 import calculus as calc
 
-f = calc.Cosine(inside=calc.Addition([calc.Polynomial(exp=1, var='y'), calc.Exponential(inside=calc.Divission(calc.Polynomial(exp=1, var='z'), calc.Polynomial(exp=1)))]))
+f = calc.Addition([calc.Product([calc.Polynomial(exp=2), calc.Polynomial(var='y', exp=2)]), calc.Polynomial(var='z', exp=2)])
 
-print(f)
-print(f.differentiate(var='y'))
+df = f.differentiate()
+
+print(df)
+print(df.differentiate())

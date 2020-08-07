@@ -16,7 +16,7 @@ def coeff_format(coeff):
   elif coeff == -1:
     return "-"
   else:
-    return str(coeff) + "*"
+    return str(coeff)
 
 def chain_rule(function, derivative, var='x'):
   if(function.inside == None):
@@ -55,11 +55,13 @@ class ImplicitDerivative:
   def __init__(self, var):
     self.var = var
 
-  def evaluate(self):
+  def evaluate(self, inps=None):
     print("Cannot evaluate implicit derivative")
+    exit()
 
-  def differentiate(self):
-    print("Cannot evaluate implicit derivative")
+  def differentiate(self, var=None):
+    print("Cannot calculate derivative for an implicit derivative")
+    exit()
 
   def __str__(self):
     return self.var + "'"
@@ -153,7 +155,11 @@ class Product:
   def __str__(self):
     prod_str = ""
     for func in self.funcs:
-      prod_str += '(' + str(func) + ')*'
+      if isinstance(func, Polynomial):
+        if func.exp != 0 and func.exp != 1:
+          prod_str += '(' + str(func) + ')*'
+          continue
+      prod_str += str(func) + '*'
     prod_str = prod_str[0:len(prod_str)-1]
     return prod_str
 
@@ -172,13 +178,15 @@ class Polynomial:
   def differentiate(self, var='x'):
     new_exp = self.exp - 1
     new_coeff = self.coeff * self.exp
-    derivative = Polynomial(coeff=new_coeff, exp=new_exp)
+    derivative = Polynomial(coeff=new_coeff, exp=new_exp, var=self.var)
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
     empty_format = self.var
     inside_str = inside_format(self.inside, empty_format)
-    coeff_str = coeff_format(self.coeff)
+    coeff_str = str(self.coeff)
+    if(self.exp != 0):
+      coeff_str = coeff_format(self.coeff)
     exp_str = ""
     if(self.exp == 0):
       inside_str = ''
