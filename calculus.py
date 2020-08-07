@@ -2,6 +2,16 @@
 
 import math
 
+def chain_rule(function, derivative, var='x'):
+  if(function.inside == None):
+    if function.var != var:
+      return Product([derivative, ImplicitDerivative(function.var)])
+    else:
+      return derivative
+  else:
+    derivative.inside = function.inside
+    return Product([derivative, function.inside.differentiate(var='x')])
+
 def generate_Polynomial(coeffs, exps=None, var='x'):
   if(exps==None):
     exps = [i for i in range(len(coeffs) - 1, -1, -1)]
@@ -24,6 +34,20 @@ def evaluate_inside(function, inps):
     print("To evaluate must specify", function.var, "value")
     exit()
 
+class ImplicitDerivative:
+
+  def __init__(self, var):
+    self.var = var
+
+  def evaluate(self):
+    print("Cannot evaluate implicit derivative")
+
+  def differentiate(self):
+    print("Cannot evaluate implicit derivative")
+
+  def __str__(self):
+    return self.var + "'"
+
 class Divission:
 
   def __init__(self, dividend, divisor):
@@ -33,7 +57,7 @@ class Divission:
   def evaluate(self, inps):
     return self.dividend.evaluate(inps)/self.divisor.evaluate(inps)
 
-  def differentiate(self):
+  def differentiate(self, var='x'):
     divisor = Polynomial(exp=2, inside=self.divisor)
     dividend = Addition([Product([self.dividend.differentiate(), self.divisor]), Product([self.dividend, self.divisor.differentiate()])], signs = [1, -1])
     return Divission(dividend, divisor)
@@ -65,7 +89,7 @@ class Addition:
       total += func.evaluate(inps) *  sign
     return total
 
-  def differentiate(self):
+  def differentiate(self, var='x'):
     new_funcs = []
     for func in self.funcs:
       new_funcs.append(func.differentiate())
@@ -100,7 +124,7 @@ class Product:
       total *= func.evaluate(inps)
     return total
 
-  def differentiate(self):
+  def differentiate(self, var='x'):
     parts = []
     for i in range(len(self.funcs)):
       factors = list(f for f in self.funcs)
@@ -129,13 +153,11 @@ class Polynomial:
     val = evaluate_inside(self, inps)
     return self.coeff * (val**self.exp)
 
-  def differentiate(self):
+  def differentiate(self, var='x'):
     new_exp = self.exp - 1
     new_coeff = self.coeff * self.exp
-    if(self.inside == None):
-      return Polynomial(coeff=new_coeff, exp=new_exp)
-    else:
-      return Product([Polynomial(coeff=new_coeff, exp=new_exp, inside=self.inside), self.inside.differentiate()])
+    derivative = Polynomial(coeff=new_coeff, exp=new_exp)
+    return chain_rule(self, derivative, var=var)
 
   def __str__(self):
     if(self.coeff == 0):
@@ -167,11 +189,9 @@ class Exponential:
     val = evaluate_inside(self, inps)
     return self.coeff * self.base**(val)
 
-  def differentiate(self):
-    if(self.inside == None):
-      return Exponential(coeff=self.coeff*math.log(self.base), base=self.base)
-    else:
-      return Product([Exponential(coeff=self.coeff*math.log(self.base), base=self.base, inside=self.inside), self.inside.differentiate()])
+  def differentiate(self, var='x'):
+    derivative = Exponential(coeff=self.coeff*math.log(self.base), base=self.base)
+    return chain_rule(self, derivative, var=var)
 
   def __str__(self):
     inside_str = 'x'
@@ -197,11 +217,9 @@ class Logaritmic:
     val = evaluate_inside(self, inps)
     return self.coeff * math.log(val, self.base)
 
-  def differentiate(self):
-    if(self.inside == None):
-      return Polynomial(exp=-1, coeff=1/math.log(self.base))
-    else:
-      return Product([Polynomial(exp=-1, coeff=1/math.log(self.base), inside=self.inside), self.inside.differentiate()])
+  def differentiate(self, var='x'):
+    derivative = Polynomial(exp=-1, coeff=1/math.log(self.base))
+    return chain_rule(self, derivative, var=var)
 
   def __str__(self):
     inside_str = '(x)'
@@ -226,11 +244,9 @@ class Sine:
     val = evaluate_inside(self, inps)
     return math.sin(val)*self.coeff
 
-  def differentiate(self):
-    if(self.inside == None):
-      return Cosine()
-    else:
-      return Product([Cosine(inside=self.inside), self.inside.differentiate()])
+  def differentiate(self, var='x'):
+    derivative = Cosine()
+    return chain_rule(self, derivative, var=var)
 
   def __str__(self):
     inside_str = '(x)'
@@ -253,10 +269,8 @@ class Cosine:
     return math.cos(val)*self.coeff
 
   def differentiate(self, var='x'):
-    if(self.inside == None):
-      return Sine(coeff = self.coeff*-1)
-    else:
-      return Product([Sine(inside=self.inside), self.inside.differentiate(var='x')])
+    derivative = Sine(coeff = self.coeff*-1)
+    return chain_rule(self, derivative, var=var)
 
   def __str__(self):
     inside_str = '(x)'
