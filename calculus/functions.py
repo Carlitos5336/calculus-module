@@ -40,7 +40,7 @@ def generate_Polynomial(coeffs, exps=None, var='x'):
 
 def evaluate_inside(function, inps):
   try:
-    if isinstance(inps, int):
+    if isinstance(inps, (int, float, complex)):
       inps = {'x':inps}
     val = inps[function.var]
     if(function.inside != None):
@@ -155,7 +155,10 @@ class Product:
   def __str__(self):
     prod_str = ""
     for func in self.funcs:
-      if isinstance(func, Polynomial):
+      if isinstance(func, (Addition, Divission)):
+        prod_str += '(' + str(func) + ')*'
+        continue
+      elif isinstance(func, Polynomial):
         if func.exp != 0 and func.exp != 1:
           prod_str += '(' + str(func) + ')*'
           continue

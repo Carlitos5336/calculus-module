@@ -1,8 +1,7 @@
-import calculus as calc
+import calculus.functions as calc
+import calculus.num_methods as met
 
-f = calc.Addition([calc.Product([calc.Polynomial(exp=2), calc.Polynomial(var='y', exp=2)]), calc.Polynomial(var='z', exp=2)])
+f = calc.Product([calc.generate_Polynomial([1, -5, -24]), calc.Sine()])
 
-df = f.differentiate()
-
-print(df)
-print(df.differentiate())
+print(f)
+print(met.simpson_method(f, [1, 3])['Result'])
