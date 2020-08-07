@@ -2,6 +2,22 @@
 
 import math
 
+def inside_format(inside, empty):
+
+  if(inside != None):
+    return '(' + str(inside) + ')'
+  else:
+    return empty
+
+def coeff_format(coeff):
+
+  if coeff == 1:
+    return ""
+  elif coeff == -1:
+    return "-"
+  else:
+    return str(coeff) + "*"
+
 def chain_rule(function, derivative, var='x'):
   if(function.inside == None):
     if function.var != var:
@@ -10,7 +26,7 @@ def chain_rule(function, derivative, var='x'):
       return derivative
   else:
     derivative.inside = function.inside
-    return Product([derivative, function.inside.differentiate(var='x')])
+    return Product([derivative, function.inside.differentiate(var=var)])
 
 def generate_Polynomial(coeffs, exps=None, var='x'):
   if(exps==None):
@@ -59,7 +75,7 @@ class Divission:
 
   def differentiate(self, var='x'):
     divisor = Polynomial(exp=2, inside=self.divisor)
-    dividend = Addition([Product([self.dividend.differentiate(), self.divisor]), Product([self.dividend, self.divisor.differentiate()])], signs = [1, -1])
+    dividend = Addition([Product([self.dividend.differentiate(var=var), self.divisor]), Product([self.dividend, self.divisor.differentiate(var=var)])], signs = [1, -1])
     return Divission(dividend, divisor)
 
   def __str__(self):
@@ -92,7 +108,7 @@ class Addition:
   def differentiate(self, var='x'):
     new_funcs = []
     for func in self.funcs:
-      new_funcs.append(func.differentiate())
+      new_funcs.append(func.differentiate(var=var))
     return Addition(new_funcs, signs=self.signs) 
 
   def __str__(self):
@@ -129,7 +145,7 @@ class Product:
     for i in range(len(self.funcs)):
       factors = list(f for f in self.funcs)
       del factors[i]
-      factors.append(self.funcs[i].differentiate())
+      factors.append(self.funcs[i].differentiate(var=var))
       parts.append(Product(factors))
     prod = Addition(parts)
     return prod
@@ -160,21 +176,15 @@ class Polynomial:
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
-    if(self.coeff == 0):
-      return '0'
-    inside_str = 'x'
-    if(self.inside != None):
-      inside_str = '(' + str(self.inside) + ')'
+    empty_format = self.var
+    inside_str = inside_format(self.inside, empty_format)
+    coeff_str = coeff_format(self.coeff)
     exp_str = ""
-    if(self.exp != 1):
-      exp_str = '^' + str(self.exp)
     if(self.exp == 0):
       inside_str = ''
       exp_str = ""
-    coeff_str = ""
-    if(self.coeff != 1 or self.exp == 0):
-      coeff_str = str(self.coeff)
-
+    elif(self.exp != 1):
+      exp_str = '^' + str(self.exp)
     return coeff_str + inside_str + exp_str
 
 class Exponential:
@@ -194,15 +204,12 @@ class Exponential:
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
-    inside_str = 'x'
-    if(self.inside != None):
-      inside_str = '(' + str(self.inside) + ')'
+    empty_format = self.var
+    inside_str = inside_format(self.inside, empty_format)
+    coeff_str = coeff_format(self.coeff)
     base_str = "e^"
     if(self.base != math.e):
       base_str = str(self.base) + '^'
-    coeff_str = ""
-    if(self.coeff != 1):
-      coeff_str = str(self.coeff) + "*"
     return coeff_str + base_str + inside_str
 
 class Logaritmic:
@@ -222,15 +229,12 @@ class Logaritmic:
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
-    inside_str = '(x)'
-    if(self.inside != None):
-      inside_str = '(' + str(self.inside) + ')'
+    empty_format = '(' + self.var + ')'
+    inside_str = inside_format(self.inside, empty_format)
+    coeff_str = coeff_format(self.coeff)
     base_str = "ln"
     if(self.base != math.e):
       base_str = "log[" + str(self.base) + "]"
-    coeff_str = ""
-    if(self.coeff != 1):
-      coeff_str = str(self.coeff) + "*"
     return coeff_str + base_str + inside_str
 
 class Sine:
@@ -249,12 +253,9 @@ class Sine:
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
-    inside_str = '(x)'
-    if(self.inside != None):
-      inside_str = '(' + str(self.inside) + ')'
-    coeff_str = ""
-    if(self.coeff != 1):
-      coeff_str = str(self.coeff) + "*"
+    empty_format = '(' + self.var + ')'
+    inside_str = inside_format(self.inside, empty_format)
+    coeff_str = coeff_format(self.coeff)
     return coeff_str + "sin" + inside_str
 
 class Cosine:
@@ -273,10 +274,7 @@ class Cosine:
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
-    inside_str = '(x)'
-    if(self.inside != None):
-      inside_str = '(' + str(self.inside) + ')'
-    coeff_str = ""
-    if(self.coeff != 1):
-      coeff_str = str(self.coeff) + "*"
+    empty_format = '(' + self.var + ')'
+    inside_str = inside_format(self.inside, empty_format)
+    coeff_str = coeff_format(self.coeff)
     return coeff_str + "cos" + inside_str
