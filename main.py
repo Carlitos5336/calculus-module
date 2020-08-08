@@ -1,7 +1,6 @@
-import calculus.functions as calc
-import calculus.num_methods as met
+import calculus.base as calc
+import calculus.diff_eq as de
 
-f = calc.Product([calc.generate_Polynomial([1, -5, -24]), calc.Sine()])
+f = calc.Addition([calc.Exponential(), calc.Polynomial(exp=1,var='y')])
 
-print(f)
-print(met.simpson_method(f, [1, 3])['Result'])
+print(de.euler_method(f, [0, 0], 0.01, 2)['Table'])

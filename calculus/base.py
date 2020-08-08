@@ -10,7 +10,6 @@ def inside_format(inside, empty):
     return empty
 
 def coeff_format(coeff):
-
   if coeff == 1:
     return ""
   elif coeff == -1:
@@ -68,25 +67,29 @@ class ImplicitDerivative:
 
 class Divission:
 
-  def __init__(self, dividend, divisor):
+  def __init__(self, dividend, divisor, coeff=1):
     self.dividend = dividend
     self.divisor = divisor
+    self.coeff = coeff
 
   def evaluate(self, inps):
-    return self.dividend.evaluate(inps)/self.divisor.evaluate(inps)
+    return self.dividend.evaluate(inps)/self.divisor.evaluate(inps) * self.coeff
 
   def differentiate(self, var='x'):
     divisor = Polynomial(exp=2, inside=self.divisor)
-    dividend = Addition([Product([self.dividend.differentiate(var=var), self.divisor]), Product([self.dividend, self.divisor.differentiate(var=var)])], signs = [1, -1])
+    prod1 = Product([self.dividend.differentiate(var=var), self.divisor])
+    prod2 = Product([self.dividend, self.divisor.differentiate(var=var)], coeff =-1)
+    dividend = Addition([prod1, prod2])
     return Divission(dividend, divisor)
 
   def __str__(self):
     div_str = '(' + str(self.dividend) + ')/(' + str(self.divisor) + ')'
-    return div_str
+    coeff_str = coeff_format(self.coeff)
+    return coeff_str + div_str
 
 class Addition:
 
-  def __init__(self, funcs, signs=None):
+  def __init__(self, funcs, coeff=1):
     new_funcs = []
     for func in funcs:
       if isinstance(func, Polynomial):
@@ -94,40 +97,32 @@ class Addition:
           continue
       new_funcs.append(func)
     self.funcs = new_funcs
-    if(signs != None):
-      self.signs = signs
-    else:
-      self.signs = list(1 for i in range(len(funcs)))
+    self.coeff = coeff
 
   def evaluate(self, inps):
     total = 0
-    for i in range(len(self.funcs)):
-      func = self.funcs[i]
-      sign = self.signs[i]
-      total += func.evaluate(inps) *  sign
-    return total
+    for func in self.funcs:
+      total += func.evaluate(inps)
+    return total * self.coeff
 
   def differentiate(self, var='x'):
     new_funcs = []
     for func in self.funcs:
       new_funcs.append(func.differentiate(var=var))
-    return Addition(new_funcs, signs=self.signs) 
+    return Addition(new_funcs, coeff=self.coeff) 
 
   def __str__(self):
     add_str = ""
-    for i in range(len(self.funcs)):
-      func = self.funcs[i]
-      sign = self.signs[i]
-      if(sign == 1 and i > 0):
-        add_str += ' + '
-      if(sign == -1):
-        add_str += ' - '
+    for func in self.funcs:
+      if func.coeff > 0 and add_str != "":
+        add_str += '+'
       add_str += str(func)
-    return add_str
+    coeff_str = coeff_format(self.coeff)
+    return coeff_str + add_str
 
 class Product:
 
-  def __init__(self, funcs):
+  def __init__(self, funcs, coeff=1):
     new_funcs = []
     for func in funcs:
       if isinstance(func, Polynomial):
@@ -135,12 +130,13 @@ class Product:
           continue
       new_funcs.append(func)
     self.funcs = new_funcs
+    self.coeff = coeff
 
   def evaluate(self, inps):
     total = 1
     for func in self.funcs:
       total *= func.evaluate(inps)
-    return total
+    return total * self.coeff
 
   def differentiate(self, var='x'):
     parts = []
@@ -164,7 +160,9 @@ class Product:
           continue
       prod_str += str(func) + '*'
     prod_str = prod_str[0:len(prod_str)-1]
-    return prod_str
+    coeff_str = coeff_format(self.coeff)
+
+    return coeff_str + prod_str
 
 class Polynomial:
 
