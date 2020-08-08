@@ -65,6 +65,8 @@ def newtonRaphson_method(function, init_value, iterations=12):
   result = result.append({"Root":val}, ignore_index=True)
 
   for it in range(iterations):
+    print(function.evaluate(val))
+    print(dfunction.evaluate(val))
     val -= function.evaluate(val)/dfunction.evaluate(val)
     result = result.append({"Root":val}, ignore_index=True)
 

@@ -175,7 +175,26 @@ class Polynomial:
 
   def evaluate(self, inps):
     val = evaluate_inside(self, inps)
-    power = val**self.exp if val > 0 else -((-val)**self.exp)
+    if self.exp != 0:
+      if val >= 0:
+        power = val**self.exp
+      else: 
+        # Checking computation for negative base exponentiation
+        # 1) Check if is a root
+        if(self.exp < 1 and self.exp > -1):
+          # Check if root is pair
+          if(1/self.exp)%2 == 0:
+            print("Cannot compute with complex values")
+            exit()
+          else:
+            power = -(abs(val)**self.exp)
+        else:
+          if(self.exp%2 == 0):
+            power = abs(val)**self.exp 
+          else:
+            power = -(abs(val)**self.exp)
+    else:
+      power = 1
     return self.coeff * power
 
   def differentiate(self, var='x'):
