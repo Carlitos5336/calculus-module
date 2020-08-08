@@ -18,7 +18,8 @@ def middlePoint_method(function, interval, divs=6, returnTable=True):
       table = table.append({"Xi":xi, "(Xi + Xi+1)/2": "n/a", 'F((Xi + Xi+1)/2)':"n/a"}, ignore_index=True)
   
   if returnTable:
-    return {'Result':result, 'Table':table}
+    table = table.append({"Xi":"Result", "(Xi + Xi+1)/2": result, 'F((Xi + Xi+1)/2)':"-"}, ignore_index=True)
+    return table
   else:
     return result
 
@@ -41,7 +42,8 @@ def trapeze_method(function, interval, divs=6, returnTable=True):
       table = table.append({"Xi":xi, "F(Xi)": fxi, '(F(Xi) + F(Xi+1))/2':"n/a"}, ignore_index=True)
   
   if returnTable:
-    return {'Result':result, 'Table':table}
+    table = table.append({"Xi":"Result", "F(Xi)": result, '(F(Xi) + F(Xi+1))/2':"-"}, ignore_index=True)
+    return table
   else:
     return result
 
@@ -70,6 +72,7 @@ def simpson_method(function, interval, divs=6, returnTable=True):
   result *= dx /3
 
   if returnTable:
-    return {'Result':result, 'Table':table}
+    table = table.append({"Xi":"Result", "F(Xi)": result}, ignore_index=True)
+    return table
   else:
     return result

@@ -21,7 +21,8 @@ def euler_method(equation, initial_cond, step, target, returnTable=True):
     vars = {'x':x, 'y':y}
 
   if returnTable:
-    return {'Result':result, 'Table':table}
+    table = table.append({'x':"Result", 'y':result, 'mx + b':"-"}, ignore_index=True)
+    return table
   else:
     return result
   
