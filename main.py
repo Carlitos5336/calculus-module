@@ -1,6 +1,5 @@
 import calculus.base as calc
-import calculus.diff_eq as de
+import calculus.roots as rt
 
-f = calc.Addition([calc.Exponential(), calc.Polynomial(exp=1,var='y')])
-
-print(de.euler_method(f, [0, 0], 0.01, 2)['Table'])
+g = calc.Polynomial(exp=1/3, inside=calc.generate_Polynomial([8, -1]))
+print(rt.fixedPoint_method([g], -2))

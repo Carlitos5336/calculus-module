@@ -41,6 +41,8 @@ def fixedPoint_method(functions, init_value, iterations=12):
     else:
       print(func, " is not a valid iterable function.")
 
+  if(selected_function == None):
+    return "-1"
   val = init_value
 
   result = pd.DataFrame(columns=['Root'])

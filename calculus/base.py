@@ -1,6 +1,7 @@
 # Made by Carlos Ogando 04/08/20
 
 import math
+import numpy as np
 
 def inside_format(inside, empty):
 
@@ -174,7 +175,8 @@ class Polynomial:
 
   def evaluate(self, inps):
     val = evaluate_inside(self, inps)
-    return self.coeff * (val**self.exp)
+    power = val**self.exp if val > 0 else -((-val)**self.exp)
+    return self.coeff * power
 
   def differentiate(self, var='x'):
     new_exp = self.exp - 1
@@ -209,7 +211,7 @@ class Exponential:
     return self.coeff * self.base**(val)
 
   def differentiate(self, var='x'):
-    derivative = Exponential(coeff=self.coeff*math.log(self.base), base=self.base)
+    derivative = Exponential(coeff=self.coeff*math.log(self.base), base=self.base, var=self.var)
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
@@ -234,7 +236,7 @@ class Logaritmic:
     return self.coeff * math.log(val, self.base)
 
   def differentiate(self, var='x'):
-    derivative = Polynomial(exp=-1, coeff=1/math.log(self.base))
+    derivative = Polynomial(exp=-1, coeff=self.coeff/math.log(self.base), var=self.var)
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
@@ -258,7 +260,7 @@ class Sine:
     return math.sin(val)*self.coeff
 
   def differentiate(self, var='x'):
-    derivative = Cosine()
+    derivative = Cosine(coeff=self.coeff, var=self.var)
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
@@ -279,7 +281,7 @@ class Cosine:
     return math.cos(val)*self.coeff
 
   def differentiate(self, var='x'):
-    derivative = Sine(coeff = self.coeff*-1)
+    derivative = Sine(coeff = self.coeff*-1, var=self.var)
     return chain_rule(self, derivative, var=var)
 
   def __str__(self):
