@@ -2,7 +2,7 @@
 name = "calculus-module"
 version = "0.1.0"
 description = ""
-authors = ["repl.it user <replituser@example.com>"]
+authors = ["Carlitos5336"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
