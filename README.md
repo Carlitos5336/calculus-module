@@ -17,20 +17,28 @@ Ideal for **students** and **researchers** who want to playtest symbolic and num
 
 ## Installation
 
-This project uses [Poetry](https://python-poetry.org/) for dependency management.
+You can install the library directly from GitHub using `pip`.
 
-Clone the repo and install dependencies:
+```bash
+python -m pip install "git+https://github.com/Carlitos5336/calculus-module.git"
+```
+
+This command downloads the repository, builds the package, and installs it along with its declared dependencies.
+
+### Install from source
+
+Alternatively, clone the repository and install it locally:
 
 ```bash
 git clone https://github.com/Carlitos5336/calculus-module.git
 cd calculus-module
-poetry install
+python -m pip install .
 ```
 
-Alternatively, use pip in an existing environment:
+If you plan to modify the library while developing it, use editable mode instead:
 
 ```bash
-pip install -e .
+python -m pip install -e .
 ```
 
 ---
@@ -62,15 +70,16 @@ print(it.middlePoint_method(f, [2, 6]))
 
 ```
 calculus-module/
-├── calculus/             # Main module with calculus classes & functions
-│   ├── base.py           # Core function classes (Polynomial, Exponential, etc.)
+├── calculus/
+│   ├── __init__.py       # Package initialization
+│   ├── base.py           # Core function classes
 │   ├── diff_eq.py        # Differential equations tools
 │   ├── integrals.py      # Numerical integration methods
 │   └── roots.py          # Root-finding algorithms
 ├── main.py               # Example script
-├── poetry.lock           # Poetry dependency lock file
-├── pyproject.toml        # Project metadata & dependencies
-└── README.md             # Project overview (this file)
+├── pyproject.toml        # Project metadata and build configuration
+├── README.md             # Project documentation
+└── LICENSE               # MIT License
 ```
 
 ---
@@ -82,5 +91,6 @@ Created by Carlos Bienvenido Ogando Montás. If you use this material, please gi
 
 ## Notes
 
-This is a work in progress. API changes are likely as features evolve.\
-For now, import directly from `calculus/` whatever classes or functions you need.
+This is a work in progress, and API changes are likely as features evolve.
+
+For now, import the classes and functions you need directly from the calculus package.
